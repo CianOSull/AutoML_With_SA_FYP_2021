@@ -92,6 +92,56 @@ def calc_tf_idf(tf, idf, n_terms):
     
     return tf_idf_array
 
+def process_text(text_data):
+     # A list of all the cleaned reviews
+    doc_list = []
+    
+    # List of all the unique terms
+    unique_terms = []
+    
+    # A list of all the term frequencies
+    tf_list = []
+    
+    for review in text_data:
+        # First clean the review
+        clean_review = clean_text(review)
+        
+        # Keeps track of the term counts for each word
+        count_dict = {}
+        
+        # Now lets find the total count for each word
+        for token in clean_review:
+            if token not in count_dict:
+                count_dict[token] = 1
+            else:
+                count_dict[token] += 1
+        
+        # Caclulate the term frequencies for each document
+        tf_list.append(calc_tf(count_dict, clean_review))
+        
+        # Then add the dictionary of counts for each document to the list
+        doc_list.append(count_dict)
+        
+        # Then add the new unique terms
+        unique_terms = set(unique_terms).union(set(clean_review))
+    
+    # Calculate the inverse document frequency value
+    idf = calc_idf(unique_terms, doc_list)
+    
+    # This array will contain the tfidf values for each term in each review
+    tfidf_values = np.zeros((len(tf_list), len(unique_terms)))
+    
+    # Now we can get the TFIDF for each document
+    for index, term_freq in enumerate(tf_list):
+        # This will return an array of the tfidf values calculated.
+        # The length of the unique terms list is passed in so that the 
+        # Array that is returned matches the tfidf array
+        tf_idf_array = calc_tf_idf(term_freq, idf, len(unique_terms))
+        # Add this to the overall tfidf values calculated
+        tfidf_values[index,:] = tf_idf_array
+    
+    return tfidf_values
+
 
 def main():
     # Download prequisites
