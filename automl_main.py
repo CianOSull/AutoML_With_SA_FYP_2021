@@ -14,12 +14,20 @@ Created on Thu Feb  4 10:54:03 2021
 #
 #-------------------------------------------------
 
+import math
+import time 
+import pandas as pd
+import numpy as np
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize 
+from sklearn.linear_model import LogisticRegression
+
 
 # To download the prequisites, run this once. 
 def nltk_downloader():
   import nltk
   nltk.download('punkt')
-
+  nltk.download('wordnet')
 
 def clean_text(text):
     # Create the lemmatizer
@@ -92,6 +100,7 @@ def calc_tf_idf(tf, idf, n_terms):
     
     return tf_idf_array
 
+
 def process_text(text_data):
      # A list of all the cleaned reviews
     doc_list = []
@@ -141,12 +150,76 @@ def process_text(text_data):
         tfidf_values[index,:] = tf_idf_array
     
     return tfidf_values
+    
+
+# Testing nltk on the dataset
+def dataset_testing():
+    print("="*50)
+
+    # Load the dataset
+    imdb_df = pd.read_csv("IMDB Dataset.csv")
+    # imdb_df = pd.read_csv("/content/drive/MyDrive/CIT/FYP/ImplementationFiles/IMDB_Dataset.csv")
+    print("Dataset loaded")
+    print("="*50)
+
+    
+    # Change each positive and negative value to 1 and 0 respectively    
+    imdb_df['sentiment'] = imdb_df['sentiment'].map({'negative' : 0, 'positive' : 1})
+    
+    # For testing, a much smaller dataset is going to be used
+    imdb_df = imdb_df.head(5000)
+    
+    # .values on a column of a dataframe returns a numpy array
+    # This is a numpy array of all the reviews
+    initial_reviews = imdb_df['review'].values
+    
+    # This is a numpy array of all the positive and negativelabels
+    labels = imdb_df['sentiment'].values
+    
+    print("Creating Feature Vector")
+    print("="*50)
+    start = time.time()
+    # Process the text data and create teh feature vector
+    feature_vector = process_text(initial_reviews)
+    end = time.time()
+    print("Feature Vector Created")
+    print(f"Execution time is {end - start} secs")
+    print("="*50)
+    
+    # Creating train and test data
+    # Inital split will be 80:20 just for testing
+    no_samples = 0.8
+    
+    # This gets the percentage of indexes from feature vector and uses those for training
+    X_train = feature_vector[0:int(no_samples*len(feature_vector))]
+    y_train = labels[0:int(no_samples*len(labels))]
+    
+    # Go from the index that was used for training to the final
+    X_test = feature_vector[int(no_samples*len(feature_vector)):len(feature_vector)]
+    y_test = labels[int(no_samples*len(labels)):len(labels)]
+    
+    # Run a Logistic regression model just for a quick test
+    model = LogisticRegression()
+
+    print("Creating Model")
+    print("="*50)
+    start = time.time()
+    model.fit(X_train, y_train)
+    end = time.time()
+    print("Model Created")
+    print(f"Execution time is {end - start} secs")
+    print("="*50)
+    
+    print("Train accuracy:", model.score(X_train, y_train))
+    print("Test accuracy:", model.score(X_test, y_test))
 
 
 def main():
     # Download prequisites
     # nltk_downloader()
-
+    
+    # Test information on dataset
+    dataset_testing()
     
 
 # Run Main
