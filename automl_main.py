@@ -11,6 +11,7 @@ Created on Thu Feb  4 10:54:03 2021
 # Useful links:
 # https://www.nltk.org/
 # https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction
+# https://towardsdatascience.com/3-ways-to-load-csv-files-into-colab-7c14fcbdcb92#:~:text=The%20easiest%20way%20to%20upload%20a%20CSV%20file,below%20(a%20cleaner%20method%20but%20it%E2%80%99s%20not%20necessary).
 #
 #-------------------------------------------------
 
