@@ -25,6 +25,7 @@ from nltk.tokenize import word_tokenize
 from sklearn.utils import shuffle
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
+from sklearn.metrics import accuracy_score
 
 
 # To download the prequisites, run this once. 
@@ -216,10 +217,10 @@ def dataset_testing():
     y_test = labels[int(no_samples*len(labels)):len(labels)]
     
     # Run a Logistic regression model just for a quick test
-    # model = LogisticRegression()
+    model = LogisticRegression()
     
     # XGB can be a better generic tester so it is being used instead.
-    model = XGBClassifier()
+    # model = XGBClassifier()
 
     print("Creating Model")
     print("="*50)
@@ -232,6 +233,17 @@ def dataset_testing():
     
     print("Train accuracy:", model.score(X_train, y_train))
     print("Test accuracy:", model.score(X_test, y_test))
+    
+    # # Test the XGBoost model
+    # y_pred = model.predict(X_test)
+    # predictions = [round(value) for value in y_pred]
+
+    # # evaluate predictions
+    # accuracy = accuracy_score(y_test, predictions)
+    # print("Accuracy: %.2f%%" % (accuracy * 100.0))
+    # print("="*50)
+
+    # print("Model Parameters:\n", model)
 
 
 def main():
