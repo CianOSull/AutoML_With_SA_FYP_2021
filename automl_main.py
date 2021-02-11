@@ -12,6 +12,7 @@ Created on Thu Feb  4 10:54:03 2021
 # https://www.nltk.org/
 # https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction
 # https://towardsdatascience.com/3-ways-to-load-csv-files-into-colab-7c14fcbdcb92#:~:text=The%20easiest%20way%20to%20upload%20a%20CSV%20file,below%20(a%20cleaner%20method%20but%20it%E2%80%99s%20not%20necessary).
+# https://medium.com/python-in-plain-english/implementing-your-first-xgboost-model-with-scikit-learn-761e2b6cfcf8
 #
 #-------------------------------------------------
 
@@ -21,7 +22,9 @@ import pandas as pd
 import numpy as np
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize 
+from sklearn.utils import shuffle
 from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
 
 
 # To download the prequisites, run this once. 
@@ -169,13 +172,23 @@ def dataset_testing():
     
     # For testing, a much smaller dataset is going to be used
     imdb_df = imdb_df.head(5000)
+
+    # Group all the negative reviews and get the first 2500
+    imdb_df_neg = (imdb_df[imdb_df['sentiment'] == 0])[0:2500]
+    # Group all the positive and get the first 2500
+    imdb_df_pos = imdb_df[imdb_df['sentiment'] == 1]
+    
+    test_df = pd.concat([imdb_df_neg, imdb_df_pos]) 
+    # print(test_df)
     
     # .values on a column of a dataframe returns a numpy array
     # This is a numpy array of all the reviews
-    initial_reviews = imdb_df['review'].values
+    # initial_reviews = imdb_df['review'].values
+    initial_reviews = test_df['review'].values
     
     # This is a numpy array of all the positive and negativelabels
-    labels = imdb_df['sentiment'].values
+    # labels = imdb_df['sentiment'].values
+    labels = test_df['sentiment'].values
     
     print("Creating Feature Vector")
     print("="*50)
@@ -186,6 +199,9 @@ def dataset_testing():
     print("Feature Vector Created")
     print(f"Execution time is {end - start} secs")
     print("="*50)
+    
+    # Shuffle the labesl and feature vector using sklearn shuffle
+    feature_vector, labels = shuffle(feature_vector, labels)
     
     # Creating train and test data
     # Inital split will be 80:20 just for testing
@@ -200,7 +216,10 @@ def dataset_testing():
     y_test = labels[int(no_samples*len(labels)):len(labels)]
     
     # Run a Logistic regression model just for a quick test
-    model = LogisticRegression()
+    # model = LogisticRegression()
+    
+    # XGB can be a better generic tester so it is being used instead.
+    model = XGBClassifier()
 
     print("Creating Model")
     print("="*50)
