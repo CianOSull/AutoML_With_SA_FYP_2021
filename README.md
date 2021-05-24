@@ -11,7 +11,7 @@ How this project was done was that 6 libaries were used to create models for sen
 <br />
 Each branch of this repository corresponds to a library used with the main branch being the generic IPython notebook layout used for each library. Each branch's notebook includes the results for the library inside the notebook.<br />
 <br />
-## Links<br />
+Links<br />
 AutoKeras: <br />
 https://autokeras.com/<br />
 AutoSKLearn: <br />
